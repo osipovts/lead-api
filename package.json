@@ -1,11 +1,11 @@
 {
-  "name": "skeleton",
+  "name": "lead-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "tsc && tsc-esm-fix",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
@@ -20,6 +20,7 @@
   "packageManager": "pnpm@11.3.0",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
@@ -31,7 +32,10 @@
     "eslint-plugin-security": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "globals": "^17.4.0",
+    "jest": "^30.4.2",
+    "jest-environment-node": "^30.4.1",
     "prettier": "^3.8.1",
+    "ts-jest": "^29.4.11",
     "tsc-esm-fix": "^3.1.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
