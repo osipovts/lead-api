@@ -10,7 +10,7 @@ export class CreateLeadUseCase {
   ) {}
 
   execute(dto: CreateLeadDto): LeadEntity {
-    this.validator.validateOrThrow(dto as LeadEntity);
+    this.validator.validateOrThrow(dto, ['username', 'contact', 'message']);
 
     const entity = this.factory.fromDto(dto);
 
