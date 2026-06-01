@@ -1,51 +1,43 @@
-import { EntityValidator } from '../entity.validator';
+import { EntityValidator } from '../entity/entity.validator';
 import type {
   RequireOnly,
   ValidationDetails,
   ValidationResult,
   ValidationRow,
-} from '../entity-validator.types';
-import type { LeadEntity } from './lead.entity';
+} from '../entity/entity-validator.types';
+import type { LeadProperties } from './lead.entity';
 
-type LeadField = keyof LeadEntity;
+type LeadField = keyof LeadProperties;
 
-export class LeadValidator extends EntityValidator<LeadEntity> {
-  private readonly idRegexp =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
+export class LeadValidator extends EntityValidator<LeadProperties> {
   private readonly limits = {
     username: { min: 1, max: 128 },
     contact: { min: 1, max: 256 },
     message: { min: 1, max: 1024 },
   } as const;
 
-  validate(entity: LeadEntity): ValidationResult<LeadEntity>;
+  validate(properties: LeadProperties): ValidationResult<LeadProperties>;
   validate<F extends readonly LeadField[]>(
-    entity: RequireOnly<LeadEntity, F[number]>,
+    entity: RequireOnly<LeadProperties, F[number]>,
     fields: F,
-  ): ValidationResult<LeadEntity>;
+  ): ValidationResult<LeadProperties>;
 
-  validate(entity: LeadEntity, fields?: readonly LeadField[]): ValidationResult<LeadEntity> {
-    const details: ValidationDetails<LeadEntity> = [];
-
-    if (this.shouldValidate('id', fields)) {
-      details.push(this.validateId(entity.id));
-    }
+  validate(
+    properties: LeadProperties,
+    fields?: readonly LeadField[],
+  ): ValidationResult<LeadProperties> {
+    const details: ValidationDetails<LeadProperties> = [];
 
     if (this.shouldValidate('username', fields)) {
-      details.push(this.validateUsername(entity.username));
+      details.push(this.validateUsername(properties.username));
     }
 
     if (this.shouldValidate('contact', fields)) {
-      details.push(this.validateContact(entity.contact));
+      details.push(this.validateContact(properties.contact));
     }
 
     if (this.shouldValidate('message', fields)) {
-      details.push(this.validateMessage(entity.message));
-    }
-
-    if (this.shouldValidate('createdAt', fields)) {
-      details.push(this.validateCreatedAt(entity.createdAt));
+      details.push(this.validateMessage(properties.message));
     }
 
     return {
@@ -54,26 +46,18 @@ export class LeadValidator extends EntityValidator<LeadEntity> {
     };
   }
 
-  private validateId(data: string): ValidationRow<LeadEntity> {
-    return this.validateRegexp('id', data, this.idRegexp);
-  }
-
-  private validateUsername(data: string): ValidationRow<LeadEntity> {
+  private validateUsername(data: string): ValidationRow<LeadProperties> {
     const { min, max } = this.limits.username;
     return this.validateLength('username', data, min, max);
   }
 
-  private validateContact(data: string): ValidationRow<LeadEntity> {
+  private validateContact(data: string): ValidationRow<LeadProperties> {
     const { min, max } = this.limits.contact;
     return this.validateLength('contact', data, min, max);
   }
 
-  private validateMessage(data: string): ValidationRow<LeadEntity> {
+  private validateMessage(data: string): ValidationRow<LeadProperties> {
     const { min, max } = this.limits.message;
     return this.validateLength('message', data, min, max);
-  }
-
-  private validateCreatedAt(data: Date): ValidationRow<LeadEntity> {
-    return this.validateClass('createdAt', data, Date);
   }
 }

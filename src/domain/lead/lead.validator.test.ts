@@ -13,44 +13,33 @@ describe('LeadValidator', () => {
     it('should return valid for a valid entity', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: 'Test message',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(true);
-      expect(result.details).toHaveLength(5);
+      expect(result.details).toHaveLength(3);
       expect(result.details.every((d) => d.valid)).toBe(true);
-    });
-
-    it('should return invalid for an invalid UUID', () => {
-      const entity = new LeadEntity(
-        'invalid-uuid',
-        'testuser',
-        'test@example.com',
-        'Test message',
-        new Date(),
-      );
-
-      const result = validator.validate(entity);
-
-      expect(result.valid).toBe(false);
-      expect(result.details.find((d) => d.property === 'id')?.valid).toBe(false);
     });
 
     it('should return invalid for username that is too short', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        '',
-        'test@example.com',
-        'Test message',
+        {
+          username: '',
+          contact: 'test@example.com',
+          message: 'Test message',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'username')?.valid).toBe(false);
@@ -59,13 +48,15 @@ describe('LeadValidator', () => {
     it('should return invalid for username that is too long', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'a'.repeat(129),
-        'test@example.com',
-        'Test message',
+        {
+          username: 'a'.repeat(129),
+          contact: 'test@example.com',
+          message: 'Test message',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'username')?.valid).toBe(false);
@@ -74,13 +65,15 @@ describe('LeadValidator', () => {
     it('should return invalid for contact that is too short', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        '',
-        'Test message',
+        {
+          username: 'testuser',
+          contact: '',
+          message: 'Test message',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'contact')?.valid).toBe(false);
@@ -89,13 +82,15 @@ describe('LeadValidator', () => {
     it('should return invalid for contact that is too long', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'a'.repeat(257),
-        'Test message',
+        {
+          username: 'testuser',
+          contact: 'a'.repeat(257),
+          message: 'Test message',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'contact')?.valid).toBe(false);
@@ -104,13 +99,15 @@ describe('LeadValidator', () => {
     it('should return invalid for message that is too short', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'test@example.com',
-        '',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: '',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'message')?.valid).toBe(false);
@@ -119,65 +116,55 @@ describe('LeadValidator', () => {
     it('should return invalid for message that is too long', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'test@example.com',
-        'a'.repeat(1025),
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: 'a'.repeat(1025),
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity);
+      const result = validator.validate(entity.properties);
 
       expect(result.valid).toBe(false);
       expect(result.details.find((d) => d.property === 'message')?.valid).toBe(false);
-    });
-
-    it('should return invalid for invalid createdAt', () => {
-      const entity = new LeadEntity(
-        '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'test@example.com',
-        'Test message',
-        // @ts-expect-error - Testing validation
-        'not-a-date',
-      );
-
-      const result = validator.validate(entity);
-
-      expect(result.valid).toBe(false);
-      expect(result.details.find((d) => d.property === 'createdAt')?.valid).toBe(false);
     });
   });
 
   describe('validate with partial fields', () => {
     it('should validate only specified fields', () => {
       const entity = new LeadEntity(
-        'invalid-uuid',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        '12345678-1234-7123-89ab-123456789012',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: '',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity, ['username', 'contact', 'message'] as const);
+      const result = validator.validate(entity.properties, ['username', 'contact'] as const);
 
       expect(result.valid).toBe(true);
-      expect(result.details).toHaveLength(3);
+      expect(result.details).toHaveLength(2);
     });
 
     it('should return invalid for invalid field in specified fields', () => {
       const entity = new LeadEntity(
-        'invalid-uuid',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        '12345678-1234-7123-89ab-123456789012',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: '',
+        },
         new Date(),
       );
 
-      const result = validator.validate(entity, ['id'] as const);
+      const result = validator.validate(entity.properties, ['message'] as const);
 
       expect(result.valid).toBe(false);
       expect(result.details).toHaveLength(1);
-      expect(result.details[0]?.property).toBe('id');
+      expect(result.details[0]?.property).toBe('message');
     });
   });
 
@@ -185,42 +172,48 @@ describe('LeadValidator', () => {
     it('should not throw for a valid entity', () => {
       const entity = new LeadEntity(
         '12345678-1234-7123-89ab-123456789012',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: 'Test message',
+        },
         new Date(),
       );
 
       expect(() => {
-        validator.validateOrThrow(entity);
+        validator.validateOrThrow(entity.properties);
       }).not.toThrow();
     });
 
     it('should throw EntityValidationError for an invalid entity', () => {
       const entity = new LeadEntity(
-        'invalid-uuid',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        '12345678-1234-7123-89ab-123456789012',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: '',
+        },
         new Date(),
       );
 
       expect(() => {
-        validator.validateOrThrow(entity);
+        validator.validateOrThrow(entity.properties);
       }).toThrow();
     });
 
     it('should throw with correct entity name', () => {
       const entity = new LeadEntity(
-        'invalid-uuid',
-        'testuser',
-        'test@example.com',
-        'Test message',
+        '12345678-1234-7123-89ab-123456789012',
+        {
+          username: 'testuser',
+          contact: 'test@example.com',
+          message: '',
+        },
         new Date(),
       );
 
       try {
-        validator.validateOrThrow(entity);
+        validator.validateOrThrow(entity.properties);
         fail('Should have thrown');
       } catch (error) {
         expect((error as EntityValidationError<LeadEntity>).entityName).toBe(LeadEntity.name);

@@ -25,7 +25,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["jest", "node"]
+    "types": ["jest", "node", "knex"]
   },
   "include": ["src/**/*.ts", "jest.config.ts"]
 }

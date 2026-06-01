@@ -1,3 +1,3 @@
-import type { LeadEntity } from '../../domain/lead/lead.entity';
+import type { LeadProperties } from '../../domain/lead/lead.entity';
 
-export type CreateLeadDto = Pick<LeadEntity, 'username' | 'contact' | 'message'>;
+export type CreateLeadDto = LeadProperties;

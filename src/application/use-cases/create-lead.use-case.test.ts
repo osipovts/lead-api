@@ -16,17 +16,17 @@ describe('CreateLeadUseCase', () => {
     };
 
     mockFactory = {
-      fromDto: jest
-        .fn()
-        .mockReturnValue(
-          new LeadEntity(
-            'test-uuid-1234',
-            'testuser',
-            'test@example.com',
-            'Test message',
-            new Date(),
-          ),
+      fromDto: jest.fn().mockReturnValue(
+        new LeadEntity(
+          'test-uuid-1234',
+          {
+            username: 'testuser',
+            contact: 'test@example.com',
+            message: 'Test message',
+          },
+          new Date(),
         ),
+      ),
     };
 
     useCase = new CreateLeadUseCase(mockValidator, mockFactory);
@@ -42,9 +42,9 @@ describe('CreateLeadUseCase', () => {
     const entity = useCase.execute(dto);
 
     expect(entity).toBeInstanceOf(LeadEntity);
-    expect(entity.username).toBe('testuser');
-    expect(entity.contact).toBe('test@example.com');
-    expect(entity.message).toBe('Test message');
+    expect(entity.properties.username).toBe('testuser');
+    expect(entity.properties.contact).toBe('test@example.com');
+    expect(entity.properties.message).toBe('Test message');
   });
 
   it('should call validator with entity', () => {

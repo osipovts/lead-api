@@ -24,9 +24,9 @@ describe('LeadEntityFactory', () => {
 
     expect(entity).toBeInstanceOf(LeadEntity);
     expect(entity.id).toBe('test-uuid-1234');
-    expect(entity.username).toBe('testuser');
-    expect(entity.contact).toBe('test@example.com');
-    expect(entity.message).toBe('Test message');
+    expect(entity.properties.username).toBe('testuser');
+    expect(entity.properties.contact).toBe('test@example.com');
+    expect(entity.properties.message).toBe('Test message');
     expect(entity.createdAt).toBeInstanceOf(Date);
   });
 
@@ -51,8 +51,8 @@ describe('LeadEntityFactory', () => {
 
     const entity = factory.fromDto(dto);
 
-    expect(entity.username).toBe('anotheruser');
-    expect(entity.contact).toBe('another@example.com');
-    expect(entity.message).toBe('Another message');
+    expect(entity.properties.username).toBe('anotheruser');
+    expect(entity.properties.contact).toBe('another@example.com');
+    expect(entity.properties.message).toBe('Another message');
   });
 });

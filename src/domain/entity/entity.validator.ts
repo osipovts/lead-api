@@ -1,23 +1,23 @@
+import { EntityValidationError } from '../errors/entity-validation.error';
 import type { RequireOnly, ValidationResult, ValidationRow } from './entity-validator.types';
-import { EntityValidationError } from './errors/entity-validation.error';
 
 export abstract class EntityValidator<T extends object> {
   constructor(private readonly entityName: string) {}
 
-  abstract validate(entity: T): ValidationResult<T>;
+  abstract validate(properties: T): ValidationResult<T>;
   abstract validate<F extends ReadonlyArray<keyof T>>(
-    entity: RequireOnly<T, F[number]>,
+    properties: RequireOnly<T, F[number]>,
     fields: F,
   ): ValidationResult<T>;
 
-  validateOrThrow(entity: T): void;
+  validateOrThrow(properties: T): void;
   validateOrThrow<F extends ReadonlyArray<keyof T>>(
-    entity: RequireOnly<T, F[number]>,
+    properties: RequireOnly<T, F[number]>,
     fields: F,
   ): void;
 
-  validateOrThrow(entity: T, fields?: ReadonlyArray<keyof T>): void {
-    const result = fields ? this.validate(entity as never, fields as never) : this.validate(entity);
+  validateOrThrow(properties: T, fields?: ReadonlyArray<keyof T>): void {
+    const result = fields ? this.validate(properties, fields as never) : this.validate(properties);
 
     if (!result.valid) {
       throw new EntityValidationError<T>(this.entityName, result.details);
