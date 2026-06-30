@@ -1,13 +1,18 @@
+import { injectable } from 'inversify';
+
 import { LeadEntity } from '../../../../domain/lead/lead.entity';
 import { KnexMapper } from '../../knex.mapper';
 
-function leadEntityFactory(
-  id: LeadEntity['id'],
-  properties: LeadEntity['properties'],
-  createdAt?: Date,
-  _?: Date,
-): LeadEntity {
-  return new LeadEntity(id, properties, createdAt);
-}
+@injectable()
+export class LeadsKnexMapper extends KnexMapper<LeadEntity> {
+  private static readonly entityFactory = (
+    id: LeadEntity['id'],
+    properties: LeadEntity['properties'],
+    createdAt?: Date,
+    _?: Date,
+  ): LeadEntity => new LeadEntity(id, properties, createdAt);
 
-export const getLeadsKnexMapper = () => new KnexMapper<LeadEntity>(leadEntityFactory);
+  constructor() {
+    super(LeadsKnexMapper.entityFactory);
+  }
+}

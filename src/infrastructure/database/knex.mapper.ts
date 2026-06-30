@@ -5,22 +5,9 @@ import type { EntityFactoryType, EntityLikeRowType } from '../knex.types';
 import { isEntityLike } from '../knex.types';
 
 /**
- * Very basic data mapper
- *
- * Example:
- *
- * function catEntityFactory(
- *   id: string,
- *   properties: CatEntity['properties'],
- *   createdAt?: Date,
- *   updatedAt?: Date,
- * ): LeadEntity {
- *   return new CatEntity(id, properties, createdAt, updatedAt);
- * }
- *
- * export const getCatsKnexMapper = () => new KnexMapper<CatEntity>(catEntityFactory);
+ * Very basic knex data mapper
  */
-export class KnexMapper<TEntity extends EntityInterface> implements MapperPort<
+export abstract class KnexMapper<TEntity extends EntityInterface> implements MapperPort<
   TEntity,
   EntityLikeRowType
 > {

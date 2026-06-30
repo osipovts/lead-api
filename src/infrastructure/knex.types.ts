@@ -1,5 +1,5 @@
 import type { EntityInterface } from '../domain/entity/entity.interface';
-import { isPojo, type Pojo } from '../types';
+import { has, isPojo, maybeHasInstance, type Pojo } from '../types';
 
 export interface EntityLikeInterface {
   id: string;
@@ -21,17 +21,12 @@ export type EntityFactoryType<TEntity extends EntityInterface> = (
   updatedAt?: Date,
 ) => TEntity;
 
-const hasId = (o: Pojo) => 'id' in o && typeof o['id'] === 'string';
-const hasProperties = (o: Pojo) => 'properties' in o && isPojo(o['properties']);
-const maybeHasCreatedAt = (o: Pojo) => !('createdAt' in o) || o['createdAt'] instanceof Date;
-const maybeHasUpdatedAt = (o: Pojo) => !('updatedAt' in o) || o['updatedAt'] instanceof Date;
-
 export function isEntityLike(obj: unknown): obj is EntityLikeInterface {
   return (
     isPojo(obj) &&
-    hasId(obj) &&
-    hasProperties(obj) &&
-    maybeHasCreatedAt(obj) &&
-    maybeHasUpdatedAt(obj)
+    has(obj, 'id', 'string') &&
+    has(obj, 'properties', 'object') &&
+    maybeHasInstance<Date>(obj, 'createdAt', Date) &&
+    maybeHasInstance<Date>(obj, 'updatedAt', Date)
   );
 }

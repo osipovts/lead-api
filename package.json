@@ -7,12 +7,15 @@
   "scripts": {
     "test": "jest",
     "build": "tsc && tsc-esm-fix",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "tsx watch src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\""
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "migrate:dev": "knex migrate:latest --knexfile ./src/infrastructure/database/knexfile.ts",
+    "migrate:prod": "node node_modules/.bin/knex migrate:latest --env production --knexfile ./dist/src/infrastructure/database/knexfile.js",
+    "migrate:make": "tsx node_modules/knex/bin/cli.js migrate:make --knexfile src/infrastructure/database/knexfile.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +28,7 @@
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.0",
     "@typescript-eslint/parser": "^8.57.0",
-    "eslint": "^10.0.3",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-perfectionist": "^5.9.0",
@@ -43,6 +46,8 @@
     "typescript-eslint": "^8.59.4"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
+    "inversify": "^8.1.0",
     "knex": "^3.2.10",
     "pg": "^8.21.0"
   }

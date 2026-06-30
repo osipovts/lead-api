@@ -1,17 +1,7 @@
-services:
-  app-prod:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: prod
-    restart: unless-stopped
-    env_file:
-      - .env
-    # ports:
-    #   - "3000:3000"
+name: lead-api
 
-  app-dev:
-    profiles: ['dev']
+services:
+  dev:
     build:
       context: .
       dockerfile: Dockerfile
@@ -22,7 +12,43 @@ services:
       - pnpm_store:/pnpm-store
     env_file:
       - .env
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - pnpm_store:/pnpm-store
+    env_file:
+      - .env
+    command: pnpm run migrate:dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.4
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '${POSTGRES_PORT_FORWARD:-5432}:${POSTGRES_PORT}'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   node_modules:
   pnpm_store:
+  postgres-data:

@@ -18,7 +18,7 @@ RUN corepack enable && \
 # Dependencies
 ################################
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY .npmrc* ./
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm fetch && \
@@ -37,7 +37,7 @@ RUN pnpm build && \
 ################################
 # Development
 ################################
-FROM base AS dev
+FROM deps AS dev
 ENV NODE_ENV=development \
     CI=true
 CMD ["pnpm", "dev"]
@@ -51,4 +51,4 @@ ENV NODE_ENV=production
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
-CMD ["dist/index.js"]
+CMD ["dist/src/index.js"]

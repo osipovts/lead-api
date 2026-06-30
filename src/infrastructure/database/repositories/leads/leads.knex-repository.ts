@@ -1,12 +1,19 @@
-import type { Knex } from 'knex';
+import { inject } from 'inversify';
 
 import { LeadEntity } from '../../../../domain/lead/lead.entity';
-import { KnexRepository } from '../../knex.repository';
+import { KnexPostgresClient } from '../../knex-postgres.client';
+import { KnexPostgresRepository } from '../../knex-postgres.repository';
 import { TableEnum } from '../../table.enum';
-import { getLeadsKnexMapper } from './leads.knex-mapper';
+import { LeadsKnexMapper } from './leads.knex-mapper';
 
-export class LeadsKnexRepository extends KnexRepository<LeadEntity> {
-  constructor(knex: Knex) {
-    super(knex, getLeadsKnexMapper(), LeadEntity.name, TableEnum.LEADS);
+export class LeadsKnexRepository extends KnexPostgresRepository<LeadEntity> {
+  readonly entityName = LeadEntity.name;
+  readonly tableName = TableEnum.LEADS;
+
+  constructor(
+    @inject(KnexPostgresClient) client: KnexPostgresClient,
+    @inject(LeadsKnexMapper) mapper: LeadsKnexMapper,
+  ) {
+    super(client, mapper);
   }
 }
